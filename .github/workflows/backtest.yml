@@ -1,14 +1,8 @@
 name: backtest
 
+# Archived: manual run only (Actions tab -> backtest -> Run workflow)
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "backtest.py"
-      - "pierg/**"
-      - "requirements.txt"
-      - ".github/workflows/backtest.yml"
 
 permissions:
   contents: write
