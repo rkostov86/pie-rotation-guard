@@ -26,6 +26,15 @@ VARIANTS = {
     "C": {"schedule": "semimonthly", "confirm": 4, "label": "1st & 15th, 4 checks (~2 months)"},
 }
 
+# Tuning round 1 (the ONE round allowed by the approved plan), declared 2026-10-28
+# BEFORE its results were seen: original A/B/C failed on switch count, so each
+# variant must hold its condition 50% longer. Nothing else changes.
+TUNED_VARIANTS = {
+    "A2": {"schedule": "monthly", "confirm": 3, "label": "Monthly, 3 checks (~3 months)"},
+    "B2": {"schedule": "semimonthly", "confirm": 3, "label": "1st & 15th, 3 checks (~6 weeks)"},
+    "C2": {"schedule": "semimonthly", "confirm": 6, "label": "1st & 15th, 6 checks (~3 months)"},
+}
+
 # --- Pie targets (real UCITS funds) -------------------------------------------
 NORMAL = {"SXR8": 0.35, "XNAQ": 0.20, "IXUA": 0.20, "SPYD": 0.15, "XDEW": 0.10}
 ROTATION = {"SXR8": 0.30, "XNAQ": 0.10, "IXUA": 0.25, "SPYD": 0.15, "XDEW": 0.10, "4GLD": 0.10}

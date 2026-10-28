@@ -98,7 +98,7 @@ def pick_winner(results):
     passing = [r for r in results if r["passed_all"]]
     if not passing:
         return None
-    order = {"A": 0, "B": 1, "C": 2}
+    order = {"A": 0, "B": 1, "C": 2, "A2": 3, "B2": 4, "C2": 5}
     return sorted(passing, key=lambda r: (r["false_alarms"], r["switches"], order[r["variant"]]))[0]["variant"]
 
 
@@ -120,7 +120,7 @@ def write_report(meta, base, results, winner, sig):
     if winner:
         L.append(f"**Winner: Variant {winner}** — passes all four pre-approved criteria with the fewest false alarms.\n")
     else:
-        L.append("**No variant passed all four criteria.** One round of tuning is allowed (see plan).\n")
+        L.append("**No variant passed all four criteria, including after the one allowed tuning round.** Per the plan: simplify the rule rather than keep adjusting.\n")
     L.append("\n## Pass criteria\n")
     L.append("| | " + " | ".join(f"Variant {r['variant']}" for r in results) + " |")
     L.append("|---|" + "---|" * len(results))
@@ -198,6 +198,11 @@ def main():
 
     results = [evaluate(k, spec, sig, pe, sim_start) for k, spec in C.VARIANTS.items()]
     winner = pick_winner(results)
+    tuned = []
+    if winner is None:  # one tuning round, declared in config before results were seen
+        tuned = [evaluate(k, spec, sig, pe, sim_start) for k, spec in C.TUNED_VARIANTS.items()]
+        winner = pick_winner(tuned)
+    results = results + tuned
 
     meta = {
         "data_end": str(px.index[-1].date()),
@@ -206,6 +211,7 @@ def main():
         "credit_series": credit_sid,
         "credit_threshold": credit_thr,
         "credit_history_start": str(fred[credit_sid].index[0].date()),
+        "hy_oas_history_start": str(fred["BAMLH0A0HYM2"].index[0].date()),
         "s5_true_days": int(sig_valid["s5"].sum()),
         "signal_days": int(len(sig_valid)),
         "synthetic": "--synthetic" in sys.argv,
