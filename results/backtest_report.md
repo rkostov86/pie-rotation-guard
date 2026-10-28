@@ -9,19 +9,19 @@ Credit signal used: **BAA10Y** (threshold 0.5 pp; history from 1999-01-04).
 
 ## Verdict
 
-**No variant passed all four criteria.** One round of tuning is allowed (see plan).
+**No variant passed all four criteria, including after the one allowed tuning round.** Per the plan: simplify the rule rather than keep adjusting.
 
 
 ## Pass criteria
 
-| | Variant A | Variant B | Variant C |
-|---|---|---|---|
-| Rule | Monthly, 2 checks (~2 months) | 1st & 15th, 2 checks (~4 weeks) | 1st & 15th, 4 checks (~2 months) |
-| Switches (max 6) | 16 ❌ | 20 ❌ | 14 ❌ |
-| In Rotation during 2008 decline | ✅ entry 2008-11-03 | ✅ entry 2008-10-01 | ✅ entry 2008-11-03 |
-| In Rotation during 2022 decline | ✅ entry 2022-04-01 | ✅ entry 2022-03-01 | ✅ entry 2022-04-01 |
-| False alarms (max 2) | 2 ✅ | 3 ❌ | 1 ✅ |
-| **Passed all** | no | no | no |
+| | Variant A | Variant B | Variant C | Variant A2 | Variant B2 | Variant C2 |
+|---|---|---|---|---|---|---|
+| Rule | Monthly, 2 checks (~2 months) | 1st & 15th, 2 checks (~4 weeks) | 1st & 15th, 4 checks (~2 months) | Monthly, 3 checks (~3 months) | 1st & 15th, 3 checks (~6 weeks) | 1st & 15th, 6 checks (~3 months) |
+| Switches (max 6) | 16 ❌ | 20 ❌ | 14 ❌ | 12 ❌ | 16 ❌ | 12 ❌ |
+| In Rotation during 2008 decline | ✅ entry 2008-11-03 | ✅ entry 2008-10-01 | ✅ entry 2008-11-03 | ✅ entry 2008-12-01 | ✅ entry 2008-10-15 | ✅ entry 2008-12-01 |
+| In Rotation during 2022 decline | ✅ entry 2022-04-01 | ✅ entry 2022-03-01 | ✅ entry 2022-04-01 | ✅ entry 2022-05-02 | ✅ entry 2022-03-15 | ✅ entry 2022-05-02 |
+| False alarms (max 2) | 2 ✅ | 3 ❌ | 1 ✅ | 0 ✅ | 2 ✅ | 0 ✅ |
+| **Passed all** | no | no | no | no | no | no |
 
 ## Performance in EUR (10,000 EUR start, stand-in funds)
 
@@ -31,6 +31,9 @@ Credit signal used: **BAA10Y** (threshold 0.5 pp; history from 1999-01-04).
 | Variant A | 86,122 | 10.83% | -48.4% | -47.3% | -32.6% | -14.4% | 20% | 115 EUR |
 | Variant B | 84,909 | 10.75% | -48.5% | -47.6% | -32.6% | -15.1% | 25% | 132 EUR |
 | Variant C | 85,601 | 10.79% | -48.4% | -47.3% | -32.6% | -14.4% | 21% | 96 EUR |
+| Variant A2 | 84,284 | 10.71% | -49.5% | -48.8% | -32.6% | -15.3% | 16% | 58 EUR |
+| Variant B2 | 85,117 | 10.77% | -49.2% | -48.5% | -32.6% | -15.2% | 21% | 112 EUR |
+| Variant C2 | 83,641 | 10.67% | -49.5% | -48.8% | -32.6% | -15.3% | 19% | 58 EUR |
 
 ## Variant A — Rotation episodes
 
@@ -77,6 +80,50 @@ Now: **Normal** (last check on 2026-10-27 close: 1/5 signals true, streak 0).
 | 2013-01-02 | 2013-10-15 | 286 |
 | 2022-04-01 | 2023-05-01 | 395 |
 | 2025-05-01 | 2025-07-01 | 61 |
+
+Now: **Normal** (last check on 2026-10-27 close: 1/5 signals true, streak 0).
+
+
+## Variant A2 — Rotation episodes
+
+| Entered | Exited | Days |
+|---|---|---|
+| 2004-06-01 | 2006-01-03 | 581 |
+| 2007-04-02 | 2007-10-01 | 182 |
+| 2008-12-01 | 2009-05-01 | 151 |
+| 2010-08-02 | 2011-02-01 | 183 |
+| 2013-02-01 | 2013-11-01 | 273 |
+| 2022-05-02 | 2023-06-01 | 395 |
+
+Now: **Normal** (last check on 2026-10-27 close: 1/5 signals true, streak 0).
+
+
+## Variant B2 — Rotation episodes
+
+| Entered | Exited | Days |
+|---|---|---|
+| 2004-05-03 | 2005-11-15 | 561 |
+| 2006-06-15 | 2007-08-15 | 426 |
+| 2008-10-15 | 2009-04-01 | 168 |
+| 2010-06-15 | 2011-01-03 | 202 |
+| 2012-12-17 | 2013-10-01 | 288 |
+| 2019-02-01 | 2019-03-15 | 42 |
+| 2022-03-15 | 2023-04-17 | 398 |
+| 2025-04-15 | 2025-06-16 | 62 |
+
+Now: **Normal** (last check on 2026-10-27 close: 1/5 signals true, streak 0).
+
+
+## Variant C2 — Rotation episodes
+
+| Entered | Exited | Days |
+|---|---|---|
+| 2004-06-15 | 2006-01-03 | 567 |
+| 2007-04-16 | 2007-10-01 | 168 |
+| 2008-12-01 | 2009-07-15 | 226 |
+| 2010-08-02 | 2011-02-15 | 197 |
+| 2013-02-01 | 2014-03-03 | 395 |
+| 2022-05-02 | 2023-06-01 | 395 |
 
 Now: **Normal** (last check on 2026-10-27 close: 1/5 signals true, streak 0).
 

@@ -6,6 +6,7 @@
   "credit_series": "BAA10Y",
   "credit_threshold": 0.5,
   "credit_history_start": "1999-01-04",
+  "hy_oas_history_start": "2023-10-30",
   "s5_true_days": 0,
   "signal_days": 5712,
   "synthetic": false
