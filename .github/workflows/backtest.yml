@@ -28,6 +28,8 @@ jobs:
           python-version: "3.13"
       - run: pip install -r requirements.txt
       - name: Run backtest
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           mkdir -p results
           set -o pipefail

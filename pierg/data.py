@@ -44,27 +44,48 @@ def fetch_prices(tickers, start="2000-01-01", retries=3):
     return px
 
 
-def fetch_fred(series, retries=3):
+FRED_API = "https://api.stlouisfed.org/fred/series/observations"
+UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) pie-rotation-guard/1.0", "Accept": "text/csv,*/*"}
+
+
+def _fred_csv(sid, start):
+    r = requests.get(FRED_URL.format(sid=sid) + f"&cosd={start}", timeout=(20, 180), headers=UA)
+    r.raise_for_status()
+    df = pd.read_csv(io.StringIO(r.text), na_values=["."])
+    return pd.Series(pd.to_numeric(df.iloc[:, 1], errors="coerce").values,
+                     index=_naive(df.iloc[:, 0]), name=sid).dropna()
+
+
+def _fred_api(sid, start, key):
+    r = requests.get(FRED_API, timeout=(20, 120), headers=UA, params={
+        "series_id": sid, "api_key": key, "file_type": "json", "observation_start": start})
+    r.raise_for_status()
+    obs = r.json()["observations"]
+    s = pd.Series([o["value"] for o in obs], index=_naive([o["date"] for o in obs]), name=sid)
+    return pd.to_numeric(s.replace(".", None), errors="coerce").dropna()
+
+
+def fetch_fred(series, start="1999-01-01", retries=4):
+    """FRED CSV endpoint first; the official API if FRED_API_KEY is set (more reliable from CI)."""
+    import os
+    key = os.environ.get("FRED_API_KEY")
     out = {}
     for sid in series:
-        last_err = None
+        errs = []
+        methods = ([("api", lambda: _fred_api(sid, start, key))] if key else []) + [("csv", lambda: _fred_csv(sid, start))]
         for attempt in range(retries):
+            name, fn = methods[attempt % len(methods)]
             try:
-                r = requests.get(FRED_URL.format(sid=sid), timeout=60,
-                                 headers={"User-Agent": "pie-rotation-guard/1.0"})
-                r.raise_for_status()
-                df = pd.read_csv(io.StringIO(r.text), na_values=["."])
-                s = pd.Series(pd.to_numeric(df.iloc[:, 1], errors="coerce").values,
-                              index=_naive(df.iloc[:, 0]), name=sid).dropna()
+                s = fn()
                 if len(s) < 50:
-                    raise ValueError(f"only {len(s)} rows for {sid}")
+                    raise ValueError(f"only {len(s)} rows")
                 out[sid] = s
                 break
             except Exception as e:  # noqa: BLE001
-                last_err = e
-                time.sleep(5 * (attempt + 1))
+                errs.append(f"{name}: {e!r}")
+                time.sleep(10 * (attempt + 1))
         else:
-            raise RuntimeError(f"FRED download failed for {sid}: {last_err}")
+            raise RuntimeError(f"FRED download failed for {sid}: " + " | ".join(errs))
     return out
 
 

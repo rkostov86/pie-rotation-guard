@@ -43,6 +43,19 @@ class RunResult:
     streak_now: int = 0
 
 
+def step(mode, streak, n, confirm):
+    """One check of the state machine. Shared by the backtest and the live monitor.
+
+    Returns (new_mode, new_streak, action) where action is ROUTINE, WATCH or SWITCH_TO_<MODE>.
+    """
+    cond = n >= C.ENTER_MIN if mode == "Normal" else n <= C.EXIT_MAX
+    streak = streak + 1 if cond else 0
+    if cond and streak >= confirm:
+        mode = "Rotation" if mode == "Normal" else "Normal"
+        return mode, 0, f"SWITCH_TO_{mode.upper()}"
+    return mode, streak, ("WATCH" if cond else "ROUTINE")
+
+
 def run(sig, schedule, confirm, start_mode="Normal"):
     mode, streak = start_mode, 0
     rows, events = [], []
@@ -53,15 +66,9 @@ def run(sig, schedule, confirm, start_mode="Normal"):
             rows.append(dict(alert=alert, eval=ev, exec=ex, n=None, mode=mode, streak=streak, action="DATA_ERROR"))
             continue  # bad data never counts, and does not reset the streak
         n = int(r["n"])
-        cond = n >= C.ENTER_MIN if mode == "Normal" else n <= C.EXIT_MAX
-        streak = streak + 1 if cond else 0
-        action = "WATCH" if cond and streak < confirm else "ROUTINE"
-        if cond and streak >= confirm:
-            mode = "Rotation" if mode == "Normal" else "Normal"
-            action = f"SWITCH_TO_{mode.upper()}"
-            if ex is not None:
-                events.append((ex, mode, alert))
-            streak = 0
+        mode, streak, action = step(mode, streak, n, confirm)
+        if action.startswith("SWITCH") and ex is not None:
+            events.append((ex, mode, alert))
         rows.append(dict(alert=alert, eval=ev, exec=ex, n=n, mode=mode, streak=streak, action=action))
     return RunResult(pd.DataFrame(rows), events, mode, streak)
 
