@@ -4,6 +4,6 @@ Traceback (most recent call last):
     ~~~~^^
   File "/home/runner/work/pie-rotation-guard/pie-rotation-guard/backtest.py", line 183, in main
     fred = fetch_fred(C.FRED_SERIES)
-  File "/home/runner/work/pie-rotation-guard/pie-rotation-guard/pierg/data.py", line 67, in fetch_fred
-    raise RuntimeError(f"FRED download failed for {sid}: {last_err}")
-RuntimeError: FRED download failed for DGS10: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=60)
+  File "/home/runner/work/pie-rotation-guard/pie-rotation-guard/pierg/data.py", line 88, in fetch_fred
+    raise RuntimeError(f"FRED download failed for {sid}: " + " | ".join(errs))
+RuntimeError: FRED download failed for DGS10: csv: ReadTimeout(ReadTimeoutError("HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=180)")) | csv: ReadTimeout(ReadTimeoutError("HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=180)")) | csv: ReadTimeout(ReadTimeoutError("HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=180)")) | csv: ReadTimeout(ReadTimeoutError("HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=180)"))
