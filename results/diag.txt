@@ -1,0 +1,4 @@
+fred_api (no key, expect 400): 400 0.226549s
+fred_csv: 200 0.292312s
+yahoo: 200 0.167680s
+ntfy: 200 0.209095s
