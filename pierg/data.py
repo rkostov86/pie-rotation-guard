@@ -49,9 +49,22 @@ UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) pie-rotation-guard/1.0", "A
 
 
 def _fred_csv(sid, start):
-    r = requests.get(FRED_URL.format(sid=sid) + f"&cosd={start}", timeout=(20, 180), headers=UA)
-    r.raise_for_status()
-    df = pd.read_csv(io.StringIO(r.text), na_values=["."])
+    """FRED stalls Python's HTTP client from GitHub runners but answers curl instantly, so use curl."""
+    import shutil
+    import subprocess
+
+    url = FRED_URL.format(sid=sid) + f"&cosd={start}"
+    if shutil.which("curl"):
+        p = subprocess.run(["curl", "-sS", "-f", "-m", "90", "--retry", "2", url],
+                           capture_output=True, text=True, timeout=200)
+        if p.returncode != 0:
+            raise RuntimeError(f"curl exit {p.returncode}: {p.stderr.strip()[:200]}")
+        text = p.stdout
+    else:
+        r = requests.get(url, timeout=(20, 180), headers=UA)
+        r.raise_for_status()
+        text = r.text
+    df = pd.read_csv(io.StringIO(text), na_values=["."])
     return pd.Series(pd.to_numeric(df.iloc[:, 1], errors="coerce").values,
                      index=_naive(df.iloc[:, 0]), name=sid).dropna()
 
