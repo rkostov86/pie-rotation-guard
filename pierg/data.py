@@ -9,7 +9,7 @@ FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}"
 
 
 def _naive(idx):
-    idx = pd.to_datetime(idx)
+    idx = pd.DatetimeIndex(pd.to_datetime(idx))
     if getattr(idx, "tz", None) is not None:
         idx = idx.tz_localize(None)
     return idx.normalize()
