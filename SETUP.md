@@ -36,6 +36,14 @@ The monitor needs 4 secrets. GitHub stores them encrypted; nobody (including me)
 
 Names must match exactly (capital letters, underscores).
 
+## Step 3b — FRED API key (only if Claude asks for it)
+
+FRED (the source for the 10-year yield and credit spreads) sometimes times out from GitHub's servers. A free key makes it reliable:
+
+1. Go to **fredaccount.stlouisfed.org**, create a free account and sign in.
+2. Open **API Keys** → **Request API Key**, describe it as "personal portfolio monitor", accept the terms.
+3. Copy the 32-character key and add it as repository secret `FRED_API_KEY` (same way as Step 3).
+
 ## Step 4 — Check two repo settings
 
 1. **Settings → Actions → General → Workflow permissions**: select **Read and write permissions** → **Save**. (The monitor commits its state file and opens a GitHub issue when a switch fires.)
